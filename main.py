@@ -147,5 +147,6 @@ class Window(QMainWindow):
 		return
 
 	def on_activated_mdi(self, sub):
+		if sub is None: return
 		print(sub.windowTitle())
 		return
