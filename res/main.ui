@@ -388,7 +388,7 @@
        <x>10</x>
        <y>30</y>
        <width>556</width>
-       <height>166</height>
+       <height>126</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -429,7 +429,7 @@
      <property name="geometry">
       <rect>
        <x>415</x>
-       <y>210</y>
+       <y>170</y>
        <width>151</width>
        <height>22</height>
       </rect>
@@ -439,13 +439,26 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>210</y>
+       <y>170</y>
        <width>141</width>
        <height>23</height>
       </rect>
      </property>
      <property name="text">
       <string>Dump Selected</string>
+     </property>
+    </widget>
+    <widget class="QMdiArea" name="mdiArea">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>205</y>
+       <width>556</width>
+       <height>151</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
     </widget>
    </widget>
@@ -475,7 +488,18 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionMDINew"/>
+    <addaction name="actionMDIClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionCascade"/>
+    <addaction name="actionTile"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionNew">
@@ -546,6 +570,32 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionCascade">
+   <property name="text">
+    <string>Cascade</string>
+   </property>
+  </action>
+  <action name="actionTile">
+   <property name="text">
+    <string>Tile</string>
+   </property>
+  </action>
+  <action name="actionMDINew">
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionMDIClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>

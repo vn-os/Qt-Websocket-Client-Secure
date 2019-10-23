@@ -1,5 +1,5 @@
 from PyQt5 import uic as UiLoader
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QTableWidget, QTableWidgetItem, QMdiSubWindow, QTextEdit
 
 from defs import DIR
 from about import AboutDlg
@@ -21,12 +21,16 @@ class Window(QMainWindow):
 
 		# Menu Bar
 
-		self.actionDir.triggered.connect(self.on_triggered_menu_dir)
-		self.actionNew.triggered.connect(self.on_triggered_menu_new)
-		self.actionOpen.triggered.connect(self.on_triggered_menu_open)
-		self.actionSave.triggered.connect(self.on_triggered_menu_save)
-		self.actionExit.triggered.connect(self.on_triggered_menu_exit)
-		self.actionAbout.triggered.connect(self.on_triggered_menu_about)
+		self.actionDir.triggered.connect(self.on_triggered_menu_file_dir)
+		self.actionNew.triggered.connect(self.on_triggered_menu_file_new)
+		self.actionOpen.triggered.connect(self.on_triggered_menu_file_open)
+		self.actionSave.triggered.connect(self.on_triggered_menu_file_save)
+		self.actionExit.triggered.connect(self.on_triggered_menu_file_exit)
+		self.actionMDINew.triggered.connect(self.on_triggered_menu_view_new)
+		self.actionMDIClose.triggered.connect(self.on_triggered_menu_view_close)
+		self.actionCascade.triggered.connect(self.on_triggered_menu_view_cascade)
+		self.actionTile.triggered.connect(self.on_triggered_menu_view_tile)
+		self.actionAbout.triggered.connect(self.on_triggered_menu_help_about)
 
 		# Sign Up Tab
 
@@ -34,47 +38,69 @@ class Window(QMainWindow):
 		self.comboBoxJoinIn.setCurrentIndex(0)
 		self.pushButtonSignUp.clicked.connect(self.on_clicked_button_signup)
 
-		table_header = ["First Name", "Last Name", "Email", "Birthday", "Gender", "Join In"]
-		self.tableWidgetUsers.setColumnCount(len(table_header))
-		self.tableWidgetUsers.setHorizontalHeaderLabels(table_header)
-		for idx, _ in enumerate(table_header):
-			self.tableWidgetUsers.setColumnWidth(idx, 90)
-
-		self.pushButtonGetTableSelected.clicked.connect(self.on_clicked_table_users)
-
 		# Sign In Tab
 
 		self.pushButtonSignIn.clicked.connect(self.on_clicked_button_signin)
+
+		table_header = ["First Name", "Last Name", "Email", "Birthday", "Gender", "Join In"]
+		self.tableWidgetUsers.setColumnCount(len(table_header))
+		self.tableWidgetUsers.setHorizontalHeaderLabels(table_header)
+		for idx, _ in enumerate(table_header): self.tableWidgetUsers.setColumnWidth(idx, 90)
+
+		# Others
+
+		self.pushButtonGetTableSelected.clicked.connect(self.on_clicked_table_users)
+		self.mdiArea.subWindowActivated.connect(self.on_activated_mdi)
 
 		return
 
 	def is_default_style(self):
 		return QApplication.instance().style().metaObject().className() == "QWindowsVistaStyle"
 
-	def on_triggered_menu_dir(self):
+	def on_triggered_menu_file_dir(self):
 		file_path = DFDialog.select_directory(self, self.is_default_style())
 		print(f"Select Directory `{file_path}`")
 		return
 
-	def on_triggered_menu_new(self):
+	def on_triggered_menu_file_new(self):
 		file_path = DFDialog.select_files(self, self.is_default_style())
 		print(f"Select Files `{file_path}`")
 		return
 
-	def on_triggered_menu_open(self):
+	def on_triggered_menu_file_open(self):
 		file_path = DFDialog.select_file(self, self.is_default_style())
 		print(f"Select File `{file_path}`")
 		return
 
-	def on_triggered_menu_save(self):
+	def on_triggered_menu_file_save(self):
 		file_path = DFDialog.save_file(self, self.is_default_style())
 		print(f"Save File `{file_path}`")
 		return
 
-	def on_triggered_menu_exit(self):
+	def on_triggered_menu_file_exit(self):
 		return self.close()
 
-	def on_triggered_menu_about(self):
+	def on_triggered_menu_view_new(self):
+		sub = QMdiSubWindow()
+		sub.setWidget(QTextEdit())
+		sub.setWindowTitle("MDI [%d]" % len(self.mdiArea.subWindowList()))
+		self.mdiArea.addSubWindow(sub)
+		sub.show()
+		return
+
+	def on_triggered_menu_view_close(self):
+		self.mdiArea.closeActiveSubWindow()
+		return
+
+	def on_triggered_menu_view_cascade(self):
+		self.mdiArea.cascadeSubWindows()
+		return
+
+	def on_triggered_menu_view_tile(self):
+		self.mdiArea.tileSubWindows()
+		return
+
+	def on_triggered_menu_help_about(self):
 		self.about_dialog = AboutDlg()
 		response = self.about_dialog.exec_()
 		print(f"{self.about_dialog.__class__.__name__} {self.about_dialog.variable} {response}")
@@ -118,4 +144,8 @@ class Window(QMainWindow):
 	def on_clicked_table_users(self):
 		for item in self.tableWidgetUsers.selectedItems():
 			print(item.row(), item.column(), item.text())
+		return
+
+	def on_activated_mdi(self, sub):
+		print(sub.windowTitle())
 		return
