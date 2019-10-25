@@ -12,7 +12,7 @@
   </property>
   <property name="font">
    <font>
-    <family>Trebuchet MS</family>
+    <family>Meiryo UI</family>
     <pointsize>10</pointsize>
    </font>
   </property>
@@ -469,7 +469,7 @@
      <x>0</x>
      <y>0</y>
      <width>820</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
