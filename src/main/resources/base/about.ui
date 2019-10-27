@@ -21,7 +21,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>vic.ico</normaloff>vic.ico</iconset>
+    <normaloff>favicon.ico</normaloff>favicon.ico</iconset>
   </property>
   <property name="modal">
    <bool>true</bool>

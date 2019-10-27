@@ -4,19 +4,22 @@ from PyQt5.QtWidgets import QDialog
 from defs import DIR
 
 class AboutDlg(QDialog):
-	def __init__(self):
+	def __init__(self, app):
 		super(AboutDlg, self).__init__()
-
-		self.initialize()
-
+		self.app = app
+		self.setup_ui()
 		return
 
-	def initialize(self):
-		UiLoader.loadUi(RF"{DIR}\res\about.ui", self)
+	def setup_ui(self):
+	
+		# Load UI from file
+		UiLoader.loadUi(self.app.get_resource("about.ui"), self)
 
+		# Controls
 		self.buttonBox.accepted.connect(self.on_accepted)
 		self.buttonBox.rejected.connect(self.on_rejected)
 
+		# Others
 		self.variable = "Close"
 
 		return

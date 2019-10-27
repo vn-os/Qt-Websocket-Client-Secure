@@ -6,21 +6,18 @@ from about import AboutDlg
 from dfdialog import DFDialog
 
 class Window(QMainWindow):
-	def __init__(self):
+	def __init__(self, app):
 		super(Window, self).__init__()
-
+		self.app = app
 		self.setup_ui()
-
 		return
 
 	def setup_ui(self):
 
 		# Load UI from file
-
-		UiLoader.loadUi(RF"{DIR}\res\main.ui", self)
+		UiLoader.loadUi(self.app.get_resource("main.ui"), self)
 
 		# Menu Bar
-
 		self.actionDir.triggered.connect(self.on_triggered_menu_file_dir)
 		self.actionNew.triggered.connect(self.on_triggered_menu_file_new)
 		self.actionOpen.triggered.connect(self.on_triggered_menu_file_open)
@@ -33,22 +30,18 @@ class Window(QMainWindow):
 		self.actionAbout.triggered.connect(self.on_triggered_menu_help_about)
 
 		# Sign Up Tab
-
 		self.comboBoxJoinIn.addItems([str(year) for year in range(1991, 2019, 1)])
 		self.comboBoxJoinIn.setCurrentIndex(0)
 		self.pushButtonSignUp.clicked.connect(self.on_clicked_button_signup)
 
 		# Sign In Tab
-
 		self.pushButtonSignIn.clicked.connect(self.on_clicked_button_signin)
 
+		# Others
 		table_header = ["First Name", "Last Name", "Email", "Birthday", "Gender", "Join In"]
 		self.tableWidgetUsers.setColumnCount(len(table_header))
 		self.tableWidgetUsers.setHorizontalHeaderLabels(table_header)
 		for idx, _ in enumerate(table_header): self.tableWidgetUsers.setColumnWidth(idx, 90)
-
-		# Others
-
 		self.pushButtonGetTableSelected.clicked.connect(self.on_clicked_table_users)
 		self.mdiArea.subWindowActivated.connect(self.on_activated_mdi)
 
@@ -101,7 +94,7 @@ class Window(QMainWindow):
 		return
 
 	def on_triggered_menu_help_about(self):
-		self.about_dialog = AboutDlg()
+		self.about_dialog = AboutDlg(self.app)
 		response = self.about_dialog.exec_()
 		print(f"{self.about_dialog.__class__.__name__} {self.about_dialog.variable} {response}")
 		return
