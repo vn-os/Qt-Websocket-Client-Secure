@@ -7,7 +7,9 @@ _ _ _
 
 ##### COMMANDS #####
 
-> $ python3 app.py
+> $ python3 src/main/python/app.py
+>
+> $ fbs run
 
 _ _ _
 
