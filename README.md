@@ -11,6 +11,12 @@ _ _ _
 >
 > $ fbs run
 
+##### SCREENSHOTS #####
+
+![](screenshots/1.PNG)
+![](screenshots/2.PNG)
+![](screenshots/3.PNG)
+
 _ _ _
 
 Website: http://vic.onl/
