@@ -9,7 +9,9 @@ from dfdialog import DFDialog
 
 class Window(QMainWindow):
 
+	m_endpoint      = ""
 	m_ssl_file_path = ""
+	m_message_text  = ""
 
 	def __init__(self, app):
 		super(Window, self).__init__()
@@ -45,8 +47,8 @@ class Window(QMainWindow):
 		return self.close()
 
 	def on_clicked_button_connect(self):
-		endpoint = self.txt_endpoint.text()
-		print("on_clicked_button_connect", endpoint)
+		self.m_endpoint = self.txt_endpoint.text()
+		print("on_clicked_button_connect", self.m_endpoint)
 		# your code here
 		return
 
@@ -58,9 +60,9 @@ class Window(QMainWindow):
 		return
 
 	def on_clicked_button_send_message(self):
-		message = self.txt_message.toPlainText()
-		self.list_log.addItem(QListWidgetItem(message))
-		print("on_clicked_button_send_message", message)
+		self.m_message_text = self.txt_message.toPlainText()
+		self.list_log.addItem(QListWidgetItem(self.m_message_text))
+		print("on_clicked_button_send_message", self.m_message_text)
 		# your code here
 		return
 
