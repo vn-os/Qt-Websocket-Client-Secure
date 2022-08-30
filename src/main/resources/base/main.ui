@@ -71,6 +71,33 @@
      </layout>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_ssl" stretch="1,0">
+      <item>
+       <widget class="QLineEdit" name="txt_ssl_file_path">
+        <property name="minimumSize">
+         <size>
+          <width>250</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="placeholderText">
+         <string>the ssl file path here ...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btn_browse_ssl_file">
+        <property name="text">
+         <string>SSL</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_log" stretch="1,0">
       <item>
        <widget class="QLabel" name="lbl_status">
@@ -122,6 +149,9 @@
           <width>0</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="placeholderText">
+         <string>enter message here ...</string>
         </property>
        </widget>
       </item>

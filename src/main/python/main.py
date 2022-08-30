@@ -21,6 +21,7 @@ class Window(QMainWindow):
 		self.actionExit.triggered.connect(self.on_triggered_menu_file_exit)
 		self.actionAbout.triggered.connect(self.on_triggered_menu_help_about)
 		self.btn_connect.clicked.connect(self.on_clicked_button_connect)
+		self.btn_browse_ssl_file.clicked.connect(self.on_clicked_button_connect)
 		self.btn_send_message.clicked.connect(self.on_clicked_button_send_message)
 		self.btn_clear_list_log.clicked.connect(self.on_clicked_button_clear_list_log)
 
@@ -41,6 +42,12 @@ class Window(QMainWindow):
 	def on_clicked_button_connect(self):
 		endpoint = self.txt_endpoint.text()
 		print("on_clicked_button_connect", endpoint)
+		# your code here
+		return
+
+	def on_clicked_button_browse_ssl_file(self):
+		ssl_file_path = self.txt_ssl_file_path.text()
+		print("on_clicked_button_browse_ssl_file", ssl_file_path)
 		# your code here
 		return
 
