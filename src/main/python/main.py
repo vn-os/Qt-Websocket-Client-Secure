@@ -39,7 +39,7 @@ class Window(QMainWindow):
 		return self.close()
 
 	def on_clicked_button_connect(self):
-		endpoint = self.txt_endpoint.toPlainText()
+		endpoint = self.txt_endpoint.text()
 		print("on_clicked_button_connect", endpoint)
 		# your code here
 		return

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>508</width>
-    <height>397</height>
+    <height>438</height>
    </rect>
   </property>
   <property name="font">
@@ -30,29 +30,13 @@
    <enum>Qt::ToolButtonIconOnly</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPlainTextEdit" name="txt_endpoint">
-    <property name="geometry">
-     <rect>
-      <x>15</x>
-      <y>15</y>
-      <width>376</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="inputMethodHints">
-     <set>Qt::ImhNone</set>
-    </property>
-    <property name="plainText">
-     <string>wss://127.0.0.1:1609</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btn_connect">
     <property name="geometry">
      <rect>
       <x>400</x>
       <y>15</y>
       <width>96</width>
-      <height>31</height>
+      <height>26</height>
      </rect>
     </property>
     <property name="text">
@@ -63,7 +47,7 @@
     <property name="geometry">
      <rect>
       <x>15</x>
-      <y>60</y>
+      <y>55</y>
       <width>451</width>
       <height>16</height>
      </rect>
@@ -76,7 +60,7 @@
     <property name="geometry">
      <rect>
       <x>15</x>
-      <y>315</y>
+      <y>355</y>
       <width>381</width>
       <height>46</height>
      </rect>
@@ -86,7 +70,7 @@
     <property name="geometry">
      <rect>
       <x>405</x>
-      <y>315</y>
+      <y>355</y>
       <width>91</width>
       <height>46</height>
      </rect>
@@ -101,21 +85,40 @@
       <x>15</x>
       <y>85</y>
       <width>481</width>
-      <height>221</height>
+      <height>256</height>
      </rect>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="btn_clear_list_log">
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>55</y>
+      <y>50</y>
       <width>26</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>C</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="txt_endpoint">
+    <property name="geometry">
+     <rect>
+      <x>15</x>
+      <y>15</y>
+      <width>376</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="inputMethodHints">
+     <set>Qt::ImhUrlCharactersOnly</set>
+    </property>
+    <property name="text">
+     <string>wss://127.0.0.1:1609</string>
     </property>
    </widget>
   </widget>
