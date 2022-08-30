@@ -1,3 +1,5 @@
+import os
+
 from PyQt5 import uic as UiLoader
 from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
 
@@ -6,6 +8,9 @@ from about import AboutDlg
 from dfdialog import DFDialog
 
 class Window(QMainWindow):
+
+	m_ssl_file_path = ""
+
 	def __init__(self, app):
 		super(Window, self).__init__()
 		self.app = app
@@ -21,7 +26,7 @@ class Window(QMainWindow):
 		self.actionExit.triggered.connect(self.on_triggered_menu_file_exit)
 		self.actionAbout.triggered.connect(self.on_triggered_menu_help_about)
 		self.btn_connect.clicked.connect(self.on_clicked_button_connect)
-		self.btn_browse_ssl_file.clicked.connect(self.on_clicked_button_connect)
+		self.btn_browse_ssl_file.clicked.connect(self.on_clicked_button_browse_ssl_file)
 		self.btn_send_message.clicked.connect(self.on_clicked_button_send_message)
 		self.btn_clear_list_log.clicked.connect(self.on_clicked_button_clear_list_log)
 
@@ -46,9 +51,10 @@ class Window(QMainWindow):
 		return
 
 	def on_clicked_button_browse_ssl_file(self):
-		ssl_file_path = self.txt_ssl_file_path.text()
-		print("on_clicked_button_browse_ssl_file", ssl_file_path)
-		# your code here
+		self.m_ssl_file_path = DFDialog.select_file(self, self.is_default_style())
+		self.txt_ssl_file_path.setText(os.path.basename(self.m_ssl_file_path))
+		self.txt_ssl_file_path.setToolTip(self.m_ssl_file_path)
+		print("on_clicked_button_browse_ssl_file", self.m_ssl_file_path)
 		return
 
 	def on_clicked_button_send_message(self):
