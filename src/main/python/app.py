@@ -9,7 +9,7 @@ from main import Window
 
 if __name__ == "__main__":
 	app = ApplicationContext()
-	# app.app.setStyle("fusion")
+	app.app.setStyle("fusion")
 	# app.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 	# app.PyQt5.QtWidgets.QStyleFactory.keys()
 
