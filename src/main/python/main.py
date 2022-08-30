@@ -28,6 +28,7 @@ class Window(QMainWindow):
 		# Signal & Slot
 		self.actionExit.triggered.connect(self.on_triggered_menu_file_exit)
 		self.actionAbout.triggered.connect(self.on_triggered_menu_help_about)
+		self.txt_endpoint.textChanged.connect(self.on_changed_endpoint)
 		self.btn_connect.clicked.connect(self.on_clicked_button_connect)
 		self.btn_browse_ssl_file.clicked.connect(self.on_clicked_button_browse_ssl_file)
 		self.btn_send_message.clicked.connect(self.on_clicked_button_send_message)
@@ -51,6 +52,11 @@ class Window(QMainWindow):
 
 	def on_triggered_menu_file_exit(self):
 		return self.close()
+
+	def on_changed_endpoint(self):
+		endpoint = self.txt_endpoint.text()
+		self.btn_connect.setEnabled(len(endpoint) > 0 and endpoint.startswith(("ws:", "wss:")))
+		return
 
 	def on_clicked_button_connect(self):
 		self.m_endpoint = self.txt_endpoint.text()
