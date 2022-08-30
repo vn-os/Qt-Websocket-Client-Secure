@@ -1,6 +1,7 @@
 import os
 
 from PyQt5 import uic as UiLoader
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
 
 from defs import DIR
@@ -9,9 +10,9 @@ from dfdialog import DFDialog
 
 class Window(QMainWindow):
 
-	m_endpoint      = ""
+	m_endpoint = ""
+	m_message_text = ""
 	m_ssl_file_path = ""
-	m_message_text  = ""
 
 	def __init__(self, app):
 		super(Window, self).__init__()
@@ -37,6 +38,11 @@ class Window(QMainWindow):
 	def is_default_style(self):
 		return QApplication.instance().style().metaObject().className() == "QWindowsVistaStyle"
 
+	def log(self, text, color):
+		item = QListWidgetItem(text)
+		item.setForeground(QColor(color))
+		self.list_log.addItem(item)
+
 	def on_triggered_menu_help_about(self):
 		self.about_dialog = AboutDlg(self.app)
 		response = self.about_dialog.exec_()
@@ -61,7 +67,7 @@ class Window(QMainWindow):
 
 	def on_clicked_button_send_message(self):
 		self.m_message_text = self.txt_message.toPlainText()
-		self.list_log.addItem(QListWidgetItem(self.m_message_text))
+		self.log(self.m_message_text, "green")
 		print("on_clicked_button_send_message", self.m_message_text)
 		# your code here
 		return
