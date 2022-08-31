@@ -8,6 +8,9 @@ from defs import DIR
 from about import AboutDlg
 from picker import Picker
 
+import websocket, ssl
+from _thread import start_new_thread
+
 class Window(QMainWindow):
 
 	m_prefs = {}
@@ -67,7 +70,7 @@ class Window(QMainWindow):
 				self.m_message_text = self.prefs_get("default_message")
 		except:
 			print("prefs not found or loading failed")
-		self.update_ui(None)
+		self.update_ui(True)
 
 	def prefs_save_to_file(self):
 		self.prefs_set("endpoint", self.m_endpoint)
@@ -76,18 +79,21 @@ class Window(QMainWindow):
 		with open(self.m_prefs_file_name, "w+") as f:
 			f.write(json.dumps(self.m_prefs, indent=4))
 
-	def update_ui(self, ws):
-		self.m_ws = ws
+	def update_ui(self, init=False):
 		# enabled/disabled state
-		self.txt_message.setEnabled(not self.m_ws is None)
-		self.btn_send_message.setEnabled(not self.m_ws is None)
+		self.txt_endpoint.setEnabled(not self.ws_ready())
+		self.txt_ssl_file_path.setEnabled(not self.ws_ready())
+		self.btn_browse_ssl_file.setEnabled(not self.ws_ready())
+		self.txt_message.setEnabled(self.ws_ready())
+		self.btn_send_message.setEnabled(self.ws_ready())
+		# edit-box endpoint
+		self.txt_endpoint.setText(self.m_endpoint)
 		# edit-box ssl file path
 		self.txt_ssl_file_path.setText(os.path.basename(self.m_ssl_file_path))
 		self.txt_ssl_file_path.setToolTip(self.m_ssl_file_path)
-		# edit-box endpoint
-		self.txt_endpoint.setText(self.m_endpoint)
-		# edit-box message
-		self.txt_message.insertPlainText(self.m_message_text)
+		self.btn_connect.setText("CONNECT" if self.m_ws is None else "DISCONNECT")
+		# the first time when launching
+		if init: self.txt_message.insertPlainText(self.m_message_text) # edit-box message
 
 	def on_triggered_menu_help_about(self):
 		self.about_dialog = AboutDlg(self.app)
@@ -98,6 +104,7 @@ class Window(QMainWindow):
 		self.prefs_save_to_file()
 
 	def on_triggered_menu_file_exit(self):
+		self.ws_close()
 		return self.close()
 
 	def on_changed_endpoint(self):
@@ -105,13 +112,11 @@ class Window(QMainWindow):
 		self.btn_connect.setEnabled(self.m_endpoint.startswith(("ws:", "wss:")))
 
 	def on_clicked_button_connect(self):
-		print("on_clicked_button_connect", self.m_endpoint)
-		# your code here
+		self.ws_start() if self.m_ws is None else self.ws_close()
 
 	def on_clicked_button_browse_ssl_file(self):
 		self.m_ssl_file_path = Picker.select_file(self, self.is_default_style())
-		self.update_ui(None)
-		print("on_clicked_button_browse_ssl_file", self.m_ssl_file_path)
+		self.update_ui()
 
 	def on_changed_message(self):
 		self.m_message_text = self.txt_message.toPlainText()
@@ -119,7 +124,54 @@ class Window(QMainWindow):
 	def on_clicked_button_send_message(self):
 		self.log(self.m_message_text, "green")
 		print("on_clicked_button_send_message", self.m_message_text)
-		# your code here
+		self.ws_send(self.m_message_text)
 
 	def on_clicked_button_clear_list_log(self):
 		self.list_log.clear()
+
+	# Websocket Connection Setup
+
+	def ws_on_open(self, ws):
+		print("WS openned", ws)
+		self.m_ws = ws
+		self.status("Opened", "green")
+		self.update_ui()
+
+	def ws_on_close(self, ws, close_status_code, close_msg):
+		print("WS closed", close_status_code, close_msg)
+		self.m_ws = None
+		self.status("Closed", "red")
+		self.update_ui()
+
+	def ws_on_message(self, ws, message):
+		print("WS message", ws, message)
+		self.log(message, "red")
+
+	def ws_ready(self):
+		return not self.m_ws is None
+
+	def ws_start(self):
+		# websocket.enableTrace(True)
+		# websocket.setdefaulttimeout(5)
+
+		self.status("Connecting to server ...", "orange")
+
+		ws = websocket.WebSocketApp(
+			self.m_endpoint,
+			on_open=self.ws_on_open,
+			on_close=self.ws_on_close,
+			on_message=self.ws_on_message,
+			header={"test": "test"}
+		)
+
+		ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+		ssl_context.load_verify_locations(self.m_ssl_file_path)
+
+		def run(*args): ws.run_forever(sslopt={"context": ssl_context})
+		start_new_thread(run, ())
+
+	def ws_close(self):
+		if self.ws_ready(): self.m_ws.close()
+
+	def ws_send(self, data):
+		if self.ws_ready(): self.m_ws.send(data)
