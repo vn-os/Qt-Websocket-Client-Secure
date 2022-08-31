@@ -97,22 +97,20 @@ class Window(QMainWindow):
 		with open(PREFS_FILE_NAME, "w+") as f:
 			f.write(json.dumps(self.m_prefs, indent=4))
 
-	def update_ui(self, init=False):
-		# update enabled/disabled state
+	def update_ui(self, update_values=False):
 		self.txt_endpoint.setEnabled(not self.ws_ready())
 		self.txt_timeout.setEnabled(not self.ws_ready())
 		self.txt_ssl_file_path.setEnabled(not self.ws_ready())
 		self.btn_browse_ssl_file.setEnabled(not self.ws_ready())
 		self.txt_message.setEnabled(self.ws_ready())
 		self.btn_send_message.setEnabled(self.ws_ready())
-		# update values
-		self.txt_endpoint.setText(str(self.m_endpoint))
-		self.txt_ssl_file_path.setText(os.path.basename(self.m_ssl_file_path))
-		self.txt_ssl_file_path.setToolTip(self.m_ssl_file_path)
+		if update_values:
+			self.txt_endpoint.setText(str(self.m_endpoint))
+			self.txt_ssl_file_path.setText(os.path.basename(self.m_ssl_file_path))
+			self.txt_ssl_file_path.setToolTip(self.m_ssl_file_path)
+			self.txt_timeout.setText(str(self.m_timeout))
+			self.txt_message.insertPlainText(self.m_message_text)  # edit-box message
 		self.btn_connect.setText("DISCONNECT" if self.ws_ready() else "CONNECT")
-		self.txt_timeout.setText(str(self.m_timeout))
-		# the first time when launching
-		if init: self.txt_message.insertPlainText(self.m_message_text) # edit-box message
 	
 	def spotcheck_params(self):
 		return self.m_timeout > 0 and self.m_endpoint.startswith(("ws:", "wss:"))
@@ -150,7 +148,7 @@ class Window(QMainWindow):
 
 	def on_clicked_button_browse_ssl_file(self):
 		self.m_ssl_file_path = Picker.select_file(self, self.is_default_style())
-		self.update_ui()
+		self.update_ui(True)
 
 	def on_changed_message(self):
 		self.m_message_text = self.txt_message.toPlainText()
@@ -191,8 +189,9 @@ class Window(QMainWindow):
 		self.log(message, color_t.error)
 
 	def ws_on_error(self, ws, error):
+		self.m_ws = None
 		self.status(str(error), color_t.error)
-		# self.ws_close()
+		self.update_ui()
 		if error: raise error
 
 	def ws_ready(self):
