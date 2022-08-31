@@ -1,0 +1,6 @@
+{
+    "endpoint": "wss://localhost:1609",
+    "ssl_file_path": "localhost.pem",
+    "default_message": "hello from client",
+    "test": "test"
+}
