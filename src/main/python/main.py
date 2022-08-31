@@ -1,15 +1,15 @@
 import os, json
 from enum import Enum
 
+import websocket, ssl
+
 from PyQt5 import uic as UiLoader
 from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
 
 from about import AboutDlg
 from picker import Picker
-
-import websocket, ssl
-from _thread import start_new_thread
+from thread import StoppableThread
 
 DEFAULT_TIMEOUT = 30
 PREFS_FILE_NAME = "prefs.json"
@@ -164,6 +164,8 @@ class Window(QMainWindow):
 
 	# Websocket Connection Setup
 
+	m_ws_threads = {}
+
 	def ws_on_open(self, ws):
 		self.m_ws = ws
 		self.status("Opened", color_t.success)
@@ -191,6 +193,7 @@ class Window(QMainWindow):
 	def ws_on_error(self, ws, error):
 		self.status(str(error), color_t.error)
 		# self.ws_close()
+		if error: raise error
 
 	def ws_ready(self):
 		return not self.m_ws is None
@@ -215,8 +218,15 @@ class Window(QMainWindow):
 			ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 			ssl_context.load_verify_locations(self.m_ssl_file_path)
 
-		def run(*args): ws.run_forever(sslopt={"context": ssl_context})
-		start_new_thread(run, ())
+		def run(*args):
+			try:
+				ws.run_forever(sslopt={"context": ssl_context})
+			except Exception as e:
+				ws.close()
+				if self.m_ws_threads[ws]: self.m_ws_threads[ws].stop()
+
+		self.m_ws_threads[ws] = StoppableThread(target=run)
+		self.m_ws_threads[ws].start()
 
 	def ws_close(self):
 		if self.ws_ready():
