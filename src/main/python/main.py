@@ -2,6 +2,7 @@ import os, json
 from enum import Enum
 
 import websocket, ssl
+from websocket import ABNF
 
 from PyQt5 import uic as UiLoader
 from PyQt5.QtGui import QColor, QPalette
@@ -10,6 +11,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
 from about import AboutDlg
 from picker import Picker
 from thread import StoppableThread
+from utils import hexdump
 
 DEFAULT_TIMEOUT = 30
 PREFS_FILE_NAME = "prefs.json"
@@ -189,8 +191,12 @@ class Window(QMainWindow):
 		self.m_ws = None
 		self.update_ui()
 
-	def ws_on_message(self, ws, message):
-		self.log(message, color_t.error)
+	def ws_on_data(self, ws, data, type, continuous):
+		print("ws_on_data", ABNF.OPCODE_MAP.get(type), continuous)
+		if type == ABNF.OPCODE_TEXT:
+			self.log(data, color_t.error)
+		elif type == ABNF.OPCODE_BINARY:
+			self.log(hexdump(data), color_t.error)
 
 	def ws_on_error(self, ws, error):
 		self.m_ws = None
@@ -211,7 +217,7 @@ class Window(QMainWindow):
 			self.m_endpoint,
 			on_open=self.ws_on_open,
 			on_close=self.ws_on_close,
-			on_message=self.ws_on_message,
+			on_data=self.ws_on_data,
 			on_error=self.ws_on_error,
 			header={"test": "test"}
 		)
