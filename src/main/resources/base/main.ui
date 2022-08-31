@@ -49,7 +49,7 @@
        <widget class="QLineEdit" name="txt_endpoint">
         <property name="minimumSize">
          <size>
-          <width>250</width>
+          <width>240</width>
           <height>0</height>
          </size>
         </property>
@@ -63,6 +63,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="btn_connect">
+        <property name="minimumSize">
+         <size>
+          <width>85</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>CONNECT</string>
         </property>
@@ -76,7 +82,7 @@
        <widget class="QLineEdit" name="txt_ssl_file_path">
         <property name="minimumSize">
          <size>
-          <width>250</width>
+          <width>240</width>
           <height>0</height>
          </size>
         </property>
@@ -90,6 +96,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="btn_browse_ssl_file">
+        <property name="minimumSize">
+         <size>
+          <width>85</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>SSL</string>
         </property>
@@ -115,6 +127,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="btn_clear_list_log">
+        <property name="minimumSize">
+         <size>
+          <width>85</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -172,7 +190,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>16777215</width>
+          <width>50</width>
           <height>70</height>
          </size>
         </property>
