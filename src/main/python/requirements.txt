@@ -1,4 +1,5 @@
 PyQt5
 QDarkStyle
 qtmodern
+qtstylish
 websocket_client

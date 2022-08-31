@@ -12,6 +12,8 @@ from main import Window
 # import qtmodern.styles
 # import qtmodern.windows
 
+# import qtstylish
+
 if __name__ == "__main__":
 	app = ApplicationContext()
 	win = Window(app)
@@ -22,6 +24,8 @@ if __name__ == "__main__":
 
 	# qtmodern.styles.dark(app.app)
 	# win = qtmodern.windows.ModernWindow(win)
+
+	# app.app.setStyleSheet(qtstylish.light())
 
 	win.show()
 
