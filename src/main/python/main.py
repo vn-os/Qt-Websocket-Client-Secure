@@ -172,6 +172,7 @@ class Window(QMainWindow):
 
 	def ws_on_error(self, ws, error):
 		self.status(str(error), color_t.error)
+		self.ws_close()
 
 	def ws_ready(self):
 		return not self.m_ws is None
@@ -200,6 +201,7 @@ class Window(QMainWindow):
 		start_new_thread(run, ())
 
 	def ws_close(self):
+		self.status("Closing connection ...", color_t.warn)
 		if self.ws_ready(): self.m_ws.close()
 
 	def ws_send(self, data):
