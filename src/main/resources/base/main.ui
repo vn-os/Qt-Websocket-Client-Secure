@@ -98,11 +98,18 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_log" stretch="1,0">
+     <layout class="QHBoxLayout" name="horizontalLayout_log" stretch="0,1,0">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Status</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QLabel" name="lbl_status">
         <property name="text">
-         <string>NO CONNECTION</string>
+         <string>No Connection</string>
         </property>
        </widget>
       </item>
