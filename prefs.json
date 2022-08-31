@@ -1,5 +1,6 @@
 {
     "endpoint": "wss://localhost:1609/echo",
+    "timeout": "30",
     "ssl_file_path": "localhost.pem",
     "default_message": "hello from client",
     "websocket_codes": {

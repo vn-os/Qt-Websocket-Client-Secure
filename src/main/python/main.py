@@ -11,6 +11,9 @@ from picker import Picker
 import websocket, ssl
 from _thread import start_new_thread
 
+DEFAULT_TIMEOUT = 5
+PREFS_FILE_NAME = "prefs.json"
+
 class color_t(str, Enum):
 	success = "green"
 	normal = "black"
@@ -20,11 +23,11 @@ class color_t(str, Enum):
 class Window(QMainWindow):
 
 	m_prefs = {}
-	m_prefs_file_name = "prefs.json"
 
 	m_ws = None
 	m_ws_codes = {}
 	m_endpoint = ""
+	m_timeout = DEFAULT_TIMEOUT
 	m_message_text = ""
 	m_ssl_file_path = ""
 
@@ -42,6 +45,7 @@ class Window(QMainWindow):
 		self.actionExit.triggered.connect(self.on_triggered_menu_file_exit)
 		self.actionAbout.triggered.connect(self.on_triggered_menu_help_about)
 		self.txt_endpoint.textChanged.connect(self.on_changed_endpoint)
+		self.txt_timeout.textChanged.connect(self.on_changed_timeout)
 		self.btn_connect.clicked.connect(self.on_clicked_button_connect)
 		self.btn_browse_ssl_file.clicked.connect(self.on_clicked_button_browse_ssl_file)
 		self.txt_message.textChanged.connect(self.on_changed_message)
@@ -74,9 +78,11 @@ class Window(QMainWindow):
 
 	def prefs_load_and_apply(self):
 		try:
-			if os.path.exists(self.m_prefs_file_name):
-				with open(self.m_prefs_file_name, "r+") as f:
+			if os.path.exists(PREFS_FILE_NAME):
+				with open(PREFS_FILE_NAME, "r+") as f:
 					self.m_prefs = json.loads(f.read())
+					timeout = self.prefs_get("timeout").strip()
+					self.m_timeout = DEFAULT_TIMEOUT if timeout == "" else int(timeout)
 					self.m_endpoint = self.prefs_get("endpoint").strip()
 					self.m_ssl_file_path = self.prefs_get("ssl_file_path").strip()
 					self.m_message_text = self.prefs_get("default_message")
@@ -86,20 +92,22 @@ class Window(QMainWindow):
 
 	def prefs_save_to_file(self):
 		self.prefs_set("endpoint", self.m_endpoint)
+		self.prefs_set("timeout", self.m_timeout)
 		self.prefs_set("ssl_file_path", self.m_ssl_file_path)
 		self.prefs_set("default_message", self.m_message_text)
-		with open(self.m_prefs_file_name, "w+") as f:
+		with open(PREFS_FILE_NAME, "w+") as f:
 			f.write(json.dumps(self.m_prefs, indent=4))
 
 	def update_ui(self, init=False):
 		# enabled/disabled state
 		self.txt_endpoint.setEnabled(not self.ws_ready())
+		self.txt_timeout.setEnabled(not self.ws_ready())
 		self.txt_ssl_file_path.setEnabled(not self.ws_ready())
 		self.btn_browse_ssl_file.setEnabled(not self.ws_ready())
 		self.txt_message.setEnabled(self.ws_ready())
 		self.btn_send_message.setEnabled(self.ws_ready())
 		# edit-box endpoint
-		self.txt_endpoint.setText(self.m_endpoint)
+		self.txt_endpoint.setText(str(self.m_endpoint))
 		# edit-box ssl file path
 		self.txt_ssl_file_path.setText(os.path.basename(self.m_ssl_file_path))
 		self.txt_ssl_file_path.setToolTip(self.m_ssl_file_path)
@@ -120,6 +128,13 @@ class Window(QMainWindow):
 	def on_changed_endpoint(self):
 		self.m_endpoint = self.txt_endpoint.text().strip()
 		self.btn_connect.setEnabled(self.m_endpoint.startswith(("ws:", "wss:")))
+
+	def on_changed_timeout(self):
+		timeout = self.txt_timeout.text().strip()
+		if timeout == "":
+				timeout = str(DEFAULT_TIMEOUT)
+				self.btn_connect.setEnabled(False)
+		self.m_timeout = int(timeout)
 
 	def on_clicked_button_connect(self):
 		if not self.ws_ready():
@@ -180,7 +195,7 @@ class Window(QMainWindow):
 
 	def ws_start(self, use_ssl=False):
 		# websocket.enableTrace(True)
-		# websocket.setdefaulttimeout(5)
+		websocket.setdefaulttimeout(self.m_timeout)
 
 		self.status("Connecting to server ...", color_t.warn)
 
