@@ -57,6 +57,7 @@ class Window(QMainWindow):
 		item = QListWidgetItem(text)
 		item.setForeground(QColor(color))
 		self.list_log.addItem(item)
+		self.list_log.scrollToBottom()
 
 	def status(self, text, color=color_t.normal):
 		self.lbl_status.setText(text)
