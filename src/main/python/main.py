@@ -1,4 +1,5 @@
 import os, json
+from enum import Enum
 
 from PyQt5 import uic as UiLoader
 from PyQt5.QtGui import QColor, QPalette
@@ -9,6 +10,12 @@ from picker import Picker
 
 import websocket, ssl
 from _thread import start_new_thread
+
+class color_t(str, Enum):
+	success = "green"
+	normal = "black"
+	warn = "orange"
+	error = "red"
 
 class Window(QMainWindow):
 
@@ -46,12 +53,12 @@ class Window(QMainWindow):
 	def is_default_style(self):
 		return QApplication.instance().style().metaObject().className() == "QWindowsVistaStyle"
 
-	def log(self, text, color="black"):
+	def log(self, text, color=color_t.normal):
 		item = QListWidgetItem(text)
 		item.setForeground(QColor(color))
 		self.list_log.addItem(item)
 
-	def status(self, text, color="black"):
+	def status(self, text, color=color_t.normal):
 		self.lbl_status.setText(text)
 		self.lbl_status.setToolTip(text)
 		palette = self.lbl_status.palette()
@@ -123,7 +130,7 @@ class Window(QMainWindow):
 		self.m_message_text = self.txt_message.toPlainText()
 
 	def on_clicked_button_send_message(self):
-		self.log(self.m_message_text, "green")
+		self.log(self.m_message_text, color_t.success)
 		print("on_clicked_button_send_message", self.m_message_text)
 		self.ws_send(self.m_message_text)
 
@@ -134,30 +141,30 @@ class Window(QMainWindow):
 
 	def ws_on_open(self, ws):
 		self.m_ws = ws
-		self.status("Opened", "green")
+		self.status("Opened", color_t.success)
 		self.update_ui()
 
 	def ws_on_close(self, ws, close_status_code, close_msg):
 		text = "Closed"
-		color = "black"
+		color = color_t.normal
 		if close_msg:
 			text = close_msg
-			color = "red"
+			color = color_t.error
 		elif close_status_code:
 			msg = None
 			ws_close_codes = self.m_ws_codes.get("close")
 			if ws_close_codes: msg = ws_close_codes.get(str(close_status_code))
 			text = f"Close code {close_status_code}" if msg is None else msg
-			color = "red"
+			color = color_t.error
 		if self.ws_ready(): self.status(text, color)
 		self.m_ws = None
 		self.update_ui()
 
 	def ws_on_message(self, ws, message):
-		self.log(message, "red")
+		self.log(message, color_t.error)
 
 	def ws_on_error(self, ws, error):
-		self.status(str(error), "red")
+		self.status(str(error), color_t.error)
 
 	def ws_ready(self):
 		return not self.m_ws is None
@@ -166,7 +173,7 @@ class Window(QMainWindow):
 		# websocket.enableTrace(True)
 		# websocket.setdefaulttimeout(5)
 
-		self.status("Connecting to server ...", "orange")
+		self.status("Connecting to server ...", color_t.warn)
 
 		ws = websocket.WebSocketApp(
 			self.m_endpoint,
