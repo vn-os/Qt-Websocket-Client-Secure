@@ -75,8 +75,8 @@ class Window(QMainWindow):
 		try:
 			with open(self.m_prefs_file_name, "r+") as f:
 				self.m_prefs = json.loads(f.read())
-				self.m_endpoint = self.prefs_get("endpoint")
-				self.m_ssl_file_path = self.prefs_get("ssl_file_path")
+				self.m_endpoint = self.prefs_get("endpoint").strip()
+				self.m_ssl_file_path = self.prefs_get("ssl_file_path").strip()
 				self.m_message_text = self.prefs_get("default_message")
 				self.m_ws_codes = self.prefs_get("websocket_codes", {})
 		except: print("prefs not found or loading failed")
@@ -116,7 +116,7 @@ class Window(QMainWindow):
 		return self.close()
 
 	def on_changed_endpoint(self):
-		self.m_endpoint = self.txt_endpoint.text()
+		self.m_endpoint = self.txt_endpoint.text().strip()
 		self.btn_connect.setEnabled(self.m_endpoint.startswith(("ws:", "wss:")))
 
 	def on_clicked_button_connect(self):
