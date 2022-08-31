@@ -202,8 +202,10 @@ class Window(QMainWindow):
 		start_new_thread(run, ())
 
 	def ws_close(self):
-		self.status("Closing connection ...", color_t.warn)
-		if self.ws_ready(): self.m_ws.close()
+		if self.ws_ready():
+			self.status("Closing connection ...", color_t.warn)
+			self.m_ws.close()
+		self.status("Closed")
 
 	def ws_send(self, data):
 		if self.ws_ready(): self.m_ws.send(data)
