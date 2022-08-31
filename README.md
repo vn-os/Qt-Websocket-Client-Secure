@@ -1,4 +1,4 @@
-### Qt Sample ###
+### Websocket Client (WS & WSS) ###
 _ _ _
 
 ##### INSTALLATION #####
@@ -7,9 +7,15 @@ _ _ _
 
 ##### COMMANDS #####
 
-> $ python3 src/main/python/app.py
+> Install
 >
-> $ fbs run
+>> $ pip install -r src\main\python\requirements.txt
+>>
+>> $ fbs run
+
+> Generate SSL file for both `localhost` and `127.0.0.1`
+>
+>> $ openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes -keyout local.pem -out local.pem -subj "/CN=localhost" -addext "subjectAltName=IP:127.0.0.1"
 
 ##### SCREENSHOTS #####
 
