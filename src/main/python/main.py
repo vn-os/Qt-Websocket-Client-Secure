@@ -16,6 +16,7 @@ class Window(QMainWindow):
 	m_prefs_file_name = "prefs.json"
 
 	m_ws = None
+	m_ws_codes = {}
 	m_endpoint = ""
 	m_message_text = ""
 	m_ssl_file_path = ""
@@ -52,6 +53,7 @@ class Window(QMainWindow):
 
 	def status(self, text, color="black"):
 		self.lbl_status.setText(text)
+		self.lbl_status.setToolTip(text)
 		self.lbl_status.setStyleSheet(f"color: {color}")
 
 	def prefs_get(self, name, default=""):
@@ -67,8 +69,8 @@ class Window(QMainWindow):
 				self.m_endpoint = self.prefs_get("endpoint")
 				self.m_ssl_file_path = self.prefs_get("ssl_file_path")
 				self.m_message_text = self.prefs_get("default_message")
-		except:
-			print("prefs not found or loading failed")
+				self.m_ws_codes = self.prefs_get("websocket_codes", {})
+		except: print("prefs not found or loading failed")
 		self.update_ui(True)
 
 	def prefs_save_to_file(self):
@@ -129,20 +131,27 @@ class Window(QMainWindow):
 	# Websocket Connection Setup
 
 	def ws_on_open(self, ws):
-		print("WS openned", ws)
 		self.m_ws = ws
 		self.status("Opened", "green")
 		self.update_ui()
 
 	def ws_on_close(self, ws, close_status_code, close_msg):
-		print("WS closed", close_status_code, close_msg)
+		text = "Closed"
+		if close_msg: text = close_msg
+		elif close_status_code:
+			msg = None
+			ws_close_codes = self.m_ws_codes.get("close")
+			if ws_close_codes: msg = ws_close_codes.get(str(close_status_code))
+			text = f"Close code {close_status_code}" if msg is None else msg
+		if self.ws_ready(): self.status(text, "red")
 		self.m_ws = None
-		self.status("Closed", "red")
 		self.update_ui()
 
 	def ws_on_message(self, ws, message):
-		print("WS message", ws, message)
 		self.log(message, "red")
+
+	def ws_on_error(self, ws, error):
+		self.status(str(error), "red")
 
 	def ws_ready(self):
 		return not self.m_ws is None
@@ -158,6 +167,7 @@ class Window(QMainWindow):
 			on_open=self.ws_on_open,
 			on_close=self.ws_on_close,
 			on_message=self.ws_on_message,
+			on_error=self.ws_on_error,
 			header={"test": "test"}
 		)
 
