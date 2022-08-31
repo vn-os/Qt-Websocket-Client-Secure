@@ -43,10 +43,14 @@ class Window(QMainWindow):
 	def is_default_style(self):
 		return QApplication.instance().style().metaObject().className() == "QWindowsVistaStyle"
 
-	def log(self, text, color):
+	def log(self, text, color="black"):
 		item = QListWidgetItem(text)
 		item.setForeground(QColor(color))
 		self.list_log.addItem(item)
+
+	def status(self, text, color="black"):
+		self.lbl_status.setText(text)
+		self.lbl_status.setStyleSheet(f"color: {color}")
 
 	def prefs_get(self, name, default=""):
 		return self.m_prefs[name] if name in self.m_prefs.keys() else default

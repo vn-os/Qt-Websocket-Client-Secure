@@ -102,7 +102,7 @@
       <item>
        <widget class="QLabel" name="lbl_status">
         <property name="text">
-         <string>State</string>
+         <string>NO CONNECTION</string>
         </property>
        </widget>
       </item>
