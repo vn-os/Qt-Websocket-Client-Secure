@@ -1,7 +1,7 @@
 import os, json
 
 from PyQt5 import uic as UiLoader
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QPalette
 from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
 
 from about import AboutDlg
@@ -54,7 +54,9 @@ class Window(QMainWindow):
 	def status(self, text, color="black"):
 		self.lbl_status.setText(text)
 		self.lbl_status.setToolTip(text)
-		self.lbl_status.setStyleSheet(f"color: {color}")
+		palette = self.lbl_status.palette()
+		palette.setColor(QPalette.WindowText, QColor(color))
+		self.lbl_status.setPalette(palette)
 
 	def prefs_get(self, name, default=""):
 		return self.m_prefs[name] if name in self.m_prefs.keys() else default
@@ -137,13 +139,17 @@ class Window(QMainWindow):
 
 	def ws_on_close(self, ws, close_status_code, close_msg):
 		text = "Closed"
-		if close_msg: text = close_msg
+		color = "black"
+		if close_msg:
+			text = close_msg
+			color = "red"
 		elif close_status_code:
 			msg = None
 			ws_close_codes = self.m_ws_codes.get("close")
 			if ws_close_codes: msg = ws_close_codes.get(str(close_status_code))
 			text = f"Close code {close_status_code}" if msg is None else msg
-		if self.ws_ready(): self.status(text, "red")
+			color = "red"
+		if self.ws_ready(): self.status(text, color)
 		self.m_ws = None
 		self.update_ui()
 
