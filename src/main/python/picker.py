@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QFileDialog
 DEF_DIR = ""
 DEF_FILTER = "All Files (*.*)"
 
-class DFDialog:
+class Picker:
 
 	@staticmethod
 	def select_file(parent = None, defaultStype = True):

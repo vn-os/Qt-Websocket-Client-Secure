@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
 
 from defs import DIR
 from about import AboutDlg
-from dfdialog import DFDialog
+from picker import Picker
 
 class Window(QMainWindow):
 
@@ -65,7 +65,7 @@ class Window(QMainWindow):
 		return
 
 	def on_clicked_button_browse_ssl_file(self):
-		self.m_ssl_file_path = DFDialog.select_file(self, self.is_default_style())
+		self.m_ssl_file_path = Picker.select_file(self, self.is_default_style())
 		self.txt_ssl_file_path.setText(os.path.basename(self.m_ssl_file_path))
 		self.txt_ssl_file_path.setToolTip(self.m_ssl_file_path)
 		print("on_clicked_button_browse_ssl_file", self.m_ssl_file_path)
