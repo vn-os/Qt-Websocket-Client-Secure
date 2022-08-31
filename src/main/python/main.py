@@ -190,7 +190,7 @@ class Window(QMainWindow):
 
 	def ws_on_error(self, ws, error):
 		self.status(str(error), color_t.error)
-		self.ws_close()
+		# self.ws_close()
 
 	def ws_ready(self):
 		return not self.m_ws is None
