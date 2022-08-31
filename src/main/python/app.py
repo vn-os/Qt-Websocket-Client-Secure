@@ -14,19 +14,24 @@ from main import Window
 
 # import qtstylish
 
+# from qt_material import apply_stylesheet
+
 if __name__ == "__main__":
-	app = ApplicationContext()
-	win = Window(app)
+	app_context = ApplicationContext()
+	app = app_context.app
+	win = Window(app_context)
 
-	app.app.setStyle("fusion")
+	app.setStyle("fusion")
 	
-	# app.app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+	# app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 
-	# qtmodern.styles.dark(app.app)
+	# qtmodern.styles.dark(app)
 	# win = qtmodern.windows.ModernWindow(win)
 
-	# app.app.setStyleSheet(qtstylish.light())
+	# app.setStyleSheet(qtstylish.light())
+
+	# apply_stylesheet(app, theme='dark_teal.xml')
 
 	win.show()
 
-	sys.exit(app.app.exec_())
+	sys.exit(app.exec_())
