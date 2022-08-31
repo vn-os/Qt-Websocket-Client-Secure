@@ -125,6 +125,10 @@ class Window(QMainWindow):
 		self.ws_close()
 		return self.close()
 
+	def closeEvent(self, event):
+		self.ws_close()
+		event.accept()
+
 	def on_changed_endpoint(self):
 		self.m_endpoint = self.txt_endpoint.text().strip()
 		self.btn_connect.setEnabled(self.spotcheck_params())
