@@ -1,7 +1,7 @@
 {
-    "endpoint": "wss://localhost:1609/echo",
+    "endpoint": "wss://127.0.0.1:1609/echo",
     "timeout": 30,
-    "ssl_file_path": "localhost.pem",
+    "sslfile": "local.pem",
     "default_message": "hello from client",
     "websocket_codes": {
         "close": {
