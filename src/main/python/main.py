@@ -4,7 +4,6 @@ from PyQt5 import uic as UiLoader
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
 
-from defs import DIR
 from about import AboutDlg
 from picker import Picker
 
@@ -96,9 +95,7 @@ class Window(QMainWindow):
 		if init: self.txt_message.insertPlainText(self.m_message_text) # edit-box message
 
 	def on_triggered_menu_help_about(self):
-		self.about_dialog = AboutDlg(self.app)
-		response = self.about_dialog.exec_()
-		print(f"{self.about_dialog.__class__.__name__} {self.about_dialog.variable} {response}")
+		AboutDlg(self.app).exec_()
 
 	def on_triggered_menu_file_save(self):
 		self.prefs_save_to_file()
