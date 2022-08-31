@@ -73,13 +73,14 @@ class Window(QMainWindow):
 
 	def prefs_load_and_apply(self):
 		try:
-			with open(self.m_prefs_file_name, "r+") as f:
-				self.m_prefs = json.loads(f.read())
-				self.m_endpoint = self.prefs_get("endpoint").strip()
-				self.m_ssl_file_path = self.prefs_get("ssl_file_path").strip()
-				self.m_message_text = self.prefs_get("default_message")
-				self.m_ws_codes = self.prefs_get("websocket_codes", {})
-		except: print("prefs not found or loading failed")
+			if os.path.exists(self.m_prefs_file_name):
+				with open(self.m_prefs_file_name, "r+") as f:
+					self.m_prefs = json.loads(f.read())
+					self.m_endpoint = self.prefs_get("endpoint").strip()
+					self.m_ssl_file_path = self.prefs_get("ssl_file_path").strip()
+					self.m_message_text = self.prefs_get("default_message")
+					self.m_ws_codes = self.prefs_get("websocket_codes", {})
+		except: self.status("Loading preferences file failed", color_t.error)
 		self.update_ui(True)
 
 	def prefs_save_to_file(self):
@@ -101,7 +102,7 @@ class Window(QMainWindow):
 		# edit-box ssl file path
 		self.txt_ssl_file_path.setText(os.path.basename(self.m_ssl_file_path))
 		self.txt_ssl_file_path.setToolTip(self.m_ssl_file_path)
-		self.btn_connect.setText("CONNECT" if self.m_ws is None else "DISCONNECT")
+		self.btn_connect.setText("DISCONNECT" if self.ws_ready() else "CONNECT")
 		# the first time when launching
 		if init: self.txt_message.insertPlainText(self.m_message_text) # edit-box message
 
@@ -120,7 +121,14 @@ class Window(QMainWindow):
 		self.btn_connect.setEnabled(self.m_endpoint.startswith(("ws:", "wss:")))
 
 	def on_clicked_button_connect(self):
-		self.ws_start() if self.m_ws is None else self.ws_close()
+		if not self.ws_ready():
+			use_ssl = self.m_endpoint.startswith("wss:")
+			if use_ssl and not os.path.exists(self.m_ssl_file_path):
+				self.status("This end-point required SSL file", color_t.error)
+				return
+			self.ws_start(use_ssl)
+		else:
+			self.ws_close()
 
 	def on_clicked_button_browse_ssl_file(self):
 		self.m_ssl_file_path = Picker.select_file(self, self.is_default_style())
@@ -131,7 +139,6 @@ class Window(QMainWindow):
 
 	def on_clicked_button_send_message(self):
 		self.log(self.m_message_text, color_t.success)
-		print("on_clicked_button_send_message", self.m_message_text)
 		self.ws_send(self.m_message_text)
 
 	def on_clicked_button_clear_list_log(self):
@@ -169,7 +176,7 @@ class Window(QMainWindow):
 	def ws_ready(self):
 		return not self.m_ws is None
 
-	def ws_start(self):
+	def ws_start(self, use_ssl=False):
 		# websocket.enableTrace(True)
 		# websocket.setdefaulttimeout(5)
 
@@ -184,8 +191,10 @@ class Window(QMainWindow):
 			header={"test": "test"}
 		)
 
-		ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-		ssl_context.load_verify_locations(self.m_ssl_file_path)
+		ssl_context = None
+		if use_ssl: # websocket secure
+			ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+			ssl_context.load_verify_locations(self.m_ssl_file_path)
 
 		def run(*args): ws.run_forever(sslopt={"context": ssl_context})
 		start_new_thread(run, ())
