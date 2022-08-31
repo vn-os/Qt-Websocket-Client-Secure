@@ -133,7 +133,10 @@
          </size>
         </property>
         <property name="inputMethodHints">
-         <set>Qt::ImhDigitsOnly|Qt::ImhFormattedNumbersOnly</set>
+         <set>Qt::ImhNone</set>
+        </property>
+        <property name="inputMask">
+         <string>999</string>
         </property>
        </widget>
       </item>
@@ -246,7 +249,7 @@
      <x>0</x>
      <y>0</y>
      <width>357</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
