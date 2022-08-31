@@ -1,3 +1,4 @@
-QDarkStyle==2.7
-fbs==0.8.4
-PyQt5==5.13.1
+PyQt5
+QDarkStyle
+qtmodern
+websocket_client
