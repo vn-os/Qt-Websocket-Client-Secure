@@ -4,17 +4,21 @@ from enum import Enum
 import websocket, ssl
 from websocket import ABNF
 
-from utils import hexdump
+from hexdump import hexdump # from utils import hexdump
 from thread import StoppableThread
 
 DEFAULT_TIMEOUT = 30
 PREFS_FILE_NAME = "prefs.json"
 
 class color_t(str, Enum):
+	# status
 	success = "green"
 	normal = "black"
 	warn = "orange"
 	error = "red"
+	# color
+	red = "red"
+	green = "green"
 
 class WSClient:
 	""" Websocket Client """
@@ -94,18 +98,23 @@ class WSClient:
 		self.m_ws = None
 		self.update_ui()
 
-	def ws_on_data(self, ws, data, type, continuous):
-		print("ws_on_data", ABNF.OPCODE_MAP.get(type), continuous)
-		if type == ABNF.OPCODE_TEXT:
-			self.log(data, color_t.error)
-		elif type == ABNF.OPCODE_BINARY:
-			self.log(hexdump(data), color_t.error)
-
 	def ws_on_error(self, ws, error):
 		self.m_ws = None
 		self.status(str(error), color_t.error)
 		self.update_ui()
 		if error: raise error
+
+	def ws_on_data(self, ws, data, type, continuous):
+		if type == ABNF.OPCODE_TEXT:
+			self.log(data, color_t.red)
+		elif type == ABNF.OPCODE_BINARY:
+			dump = hexdump(data)
+			self.log(str(dump), color_t.red)
+		else:
+			print("received data type did not support", ABNF.OPCODE_MAP.get(type))
+
+	def ws_send(self, data):
+		if self.ws_ready(): self.m_ws.send(data)
 
 	def ws_ready(self):
 		return not self.m_ws is None
@@ -145,6 +154,3 @@ class WSClient:
 			self.status("Closing connection ...", color_t.warn)
 			self.m_ws.close()
 		self.status("Closed")
-
-	def ws_send(self, data):
-		if self.ws_ready(): self.m_ws.send(data)
