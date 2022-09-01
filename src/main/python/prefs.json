@@ -3,6 +3,9 @@
     "timeout": 30,
     "sslfile": "local.pem",
     "default_message": "hello from client",
+    "default_custom_header": {
+        "test": "test"
+    },
     "websocket_codes": {
         "close": {
             "1000": "Normal Closure",

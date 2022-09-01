@@ -35,6 +35,7 @@ class WSClient:
 	m_sslfile = ""
 	m_message = ""
 	m_timeout = DEFAULT_TIMEOUT
+	m_custom_header = {}
 
 	m_ws_threads = {}
 
@@ -66,6 +67,7 @@ class WSClient:
 					self.m_sslfile = self.prefs_get("sslfile").strip()
 					self.m_message = self.prefs_get("default_message")
 					self.m_ws_codes = self.prefs_get("websocket_codes", {})
+					self.m_custom_header = self.prefs_get("default_custom_header", {})
 		except:
 			self.status("Loading preferences file failed", color_t.error)
 		self.update_ui(True)
@@ -75,6 +77,7 @@ class WSClient:
 		self.prefs_set("timeout", self.m_timeout)
 		self.prefs_set("sslfile", self.m_sslfile)
 		self.prefs_set("default_message", self.m_message)
+		self.prefs_set("default_custom_header", self.m_custom_header)
 		with open(PREFS_FILE_NAME, "w+") as f:
 			f.write(json.dumps(self.m_prefs, indent=4))
 
@@ -137,11 +140,11 @@ class WSClient:
 
 		ws = websocket.WebSocketApp(
 			self.m_endpoint,
+			header=self.m_custom_header,
 			on_open=self.ws_on_open,
 			on_close=self.ws_on_close,
 			on_data=self.ws_on_data,
 			on_error=self.ws_on_error,
-			header={"test": "test"}
 		)
 
 		ssl_context = None
