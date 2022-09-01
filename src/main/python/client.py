@@ -20,6 +20,10 @@ class color_t(str, Enum):
 	red = "red"
 	green = "green"
 
+class data_t(int, Enum):
+	text = 0
+	binary = 1
+
 class WSClient:
 	""" Websocket Client """
 
@@ -114,13 +118,13 @@ class WSClient:
 		if type == ABNF.OPCODE_TEXT:
 			self.log(data, color_t.red)
 		elif type == ABNF.OPCODE_BINARY:
-			dump = hexdump(data)
-			self.log(str(dump), color_t.red)
+			dump = str(hexdump(data))
+			self.log(dump, color_t.red)
 		else:
 			print("received data type did not support", ABNF.OPCODE_MAP.get(type))
 
-	def ws_send(self, data):
-		if self.ws_ready(): self.m_ws.send(data)
+	def ws_send(self, data, opcode=ABNF.OPCODE_TEXT):
+		if self.ws_ready(): self.m_ws.send(data, opcode)
 
 	def ws_ready(self):
 		return not self.m_ws is None

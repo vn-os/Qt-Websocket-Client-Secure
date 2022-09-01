@@ -2,7 +2,7 @@ import os
 
 from PyQt5 import uic as UiLoader
 from PyQt5.QtGui import QColor, QPalette
-from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QListWidgetItem, QMessageBox
 
 from client import *
 from about import AboutDlg
@@ -69,6 +69,9 @@ class Window(QMainWindow, WSClient):
 			self.txt_message.insertPlainText(self.m_message)  # edit-box message
 		self.btn_connect.setText("DISCONNECT" if self.ws_ready() else "CONNECT")
 	
+	def selected_send_data_type(self):
+		return abs(self.buttonGroup_message.checkedId()) - 2
+
 	def on_triggered_menu_help_about(self):
 		AboutDlg(self.app).exec_()
 
@@ -86,9 +89,13 @@ class Window(QMainWindow, WSClient):
 	def on_changed_timeout(self):
 		timeout = self.txt_timeout.text().strip()
 		if not timeout.isdecimal():
-				timeout = str(0)
+			timeout = str(0)
 		self.m_timeout = int(timeout)
 		self.btn_connect.setEnabled(self.spotcheck_params())
+
+	def on_changed_message(self):
+		self.m_message = self.txt_message.toPlainText()
+		self.btn_send_message.setEnabled(len(self.m_message) > 0)
 
 	def on_clicked_button_connect(self):
 		if not self.ws_ready():
@@ -104,12 +111,20 @@ class Window(QMainWindow, WSClient):
 		self.m_sslfile = Picker.select_file(self, self.is_default_style())
 		self.update_ui(True)
 
-	def on_changed_message(self):
-		self.m_message = self.txt_message.toPlainText()
-
 	def on_clicked_button_send_message(self):
-		self.log(self.m_message, color_t.success)
-		self.ws_send(self.m_message)
+		message = self.m_message
+		data_type = self.selected_send_data_type()
+		if data_type == data_t.text:
+			self.ws_send(message)
+		elif data_type == data_t.binary:
+			try:
+				binary = bytes.fromhex(self.m_message.strip())
+				self.ws_send(binary, ABNF.OPCODE_BINARY)
+				message = str(hexdump(binary))
+			except Exception as e:
+				QMessageBox.critical(self, "Error", str(e))
+				return
+		self.log(message, color_t.success)
 
 	def on_clicked_button_clear_list_log(self):
 		self.list_log.clear()
