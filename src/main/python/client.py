@@ -1,4 +1,5 @@
-import os, json
+import os
+import jstyleson as json
 from enum import Enum
 
 import websocket, ssl
