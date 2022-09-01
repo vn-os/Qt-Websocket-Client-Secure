@@ -1,5 +1,6 @@
 fbs
 hexdump
+jstyleson
 PyQt5
 QDarkStyle
 qt_material

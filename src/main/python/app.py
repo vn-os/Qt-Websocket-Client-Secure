@@ -1,8 +1,8 @@
-import os
+import os, sys
+
 os.environ["PATH"] += os.pathsep if os.environ["PATH"][-1] != os.pathsep else ""
 os.environ["PATH"] += os.pathsep.join([os.getcwd()])
 
-import sys
 from fbs_runtime.application_context.PyQt5 import ApplicationContext
 
 from main import Window
