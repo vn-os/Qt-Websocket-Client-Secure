@@ -4,7 +4,7 @@ from enum import Enum
 import websocket, ssl
 from websocket import ABNF
 
-from hexdump import hexdump # from utils import hexdump
+from hexdump import hexdump
 from thread import StoppableThread
 
 DEFAULT_TIMEOUT = 30
