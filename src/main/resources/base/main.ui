@@ -20,7 +20,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Websocket Client (WS &amp; WSS)</string>
+   <string>da Websocket Client</string>
   </property>
   <property name="windowIcon">
    <iconset>

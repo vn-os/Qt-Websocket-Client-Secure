@@ -1,5 +1,5 @@
 {
-    "app_name": "Qt-Sample",
+    "app_name": "da Websocket Client",
     "author": "Vic",
     "main_module": "src/main/python/app.py",
     "version": "0.0.0"
