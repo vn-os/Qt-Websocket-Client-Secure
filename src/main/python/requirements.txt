@@ -1,6 +1,9 @@
+fbs
+hexdump
 PyQt5
 QDarkStyle
 qt_material
 qtmodern
 qtstylish
+simple_hexdump
 websocket_client
