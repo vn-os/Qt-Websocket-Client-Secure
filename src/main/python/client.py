@@ -7,7 +7,8 @@ from websocket import ABNF
 from hexdump import hexdump
 from thread import StoppableThread
 
-DEFAULT_TIMEOUT = 30
+DEFAULT_TIME_OUT = 30
+DEFAULT_DEBUG_TRACE = False
 PREFS_FILE_NAME = "prefs.json"
 
 class color_t(str, Enum):
@@ -34,8 +35,8 @@ class WSClient:
 	m_endpoint = ""
 	m_sslfile = ""
 	m_message = ""
-	m_debug = False
-	m_timeout = DEFAULT_TIMEOUT
+	m_debug = DEFAULT_DEBUG_TRACE
+	m_timeout = DEFAULT_TIME_OUT
 	m_custom_header = {}
 
 	m_ws_threads = {}
@@ -63,7 +64,7 @@ class WSClient:
 			if os.path.exists(PREFS_FILE_NAME):
 				with open(PREFS_FILE_NAME, "r+") as f:
 					self.m_prefs = json.loads(f.read())
-					self.m_timeout = self.prefs_get("timeout", DEFAULT_TIMEOUT)
+					self.m_timeout = self.prefs_get("timeout", DEFAULT_TIME_OUT)
 					self.m_endpoint = self.prefs_get("endpoint").strip()
 					self.m_sslfile = self.prefs_get("sslfile").strip()
 					self.m_debug = self.prefs_get("debug_trace", False)
