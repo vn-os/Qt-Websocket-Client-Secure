@@ -34,6 +34,7 @@ class WSClient:
 	m_endpoint = ""
 	m_sslfile = ""
 	m_message = ""
+	m_debug = False
 	m_timeout = DEFAULT_TIMEOUT
 	m_custom_header = {}
 
@@ -65,6 +66,7 @@ class WSClient:
 					self.m_timeout = self.prefs_get("timeout", DEFAULT_TIMEOUT)
 					self.m_endpoint = self.prefs_get("endpoint").strip()
 					self.m_sslfile = self.prefs_get("sslfile").strip()
+					self.m_debug = self.prefs_get("debug_trace", False)
 					self.m_message = self.prefs_get("default_message")
 					self.m_ws_codes = self.prefs_get("websocket_codes", {})
 					self.m_custom_header = self.prefs_get("default_custom_header", {})
@@ -76,6 +78,7 @@ class WSClient:
 		self.prefs_set("endpoint", self.m_endpoint)
 		self.prefs_set("timeout", self.m_timeout)
 		self.prefs_set("sslfile", self.m_sslfile)
+		self.prefs_set("debug_trace", self.m_debug)
 		self.prefs_set("default_message", self.m_message)
 		self.prefs_set("default_custom_header", self.m_custom_header)
 		with open(PREFS_FILE_NAME, "w+") as f:
@@ -133,7 +136,7 @@ class WSClient:
 		return not self.m_ws is None
 
 	def ws_start(self, use_ssl):
-		# websocket.enableTrace(True)
+		websocket.enableTrace(self.m_debug)
 		websocket.setdefaulttimeout(self.m_timeout)
 
 		self.status("Connecting to server ...", color_t.warn)
