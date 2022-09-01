@@ -77,6 +77,11 @@ class WSClient:
 	def spotcheck_params(self):
 		return self.m_timeout > 0 and self.m_endpoint.startswith(("ws:", "wss:"))
 
+	def ws_stop_thread(self, ws):
+		if ws in self.m_ws_threads.keys():
+			self.m_ws_threads[ws].stop()
+			del self.m_ws_threads[ws]
+
 	def ws_on_open(self, ws):
 		self.m_ws = ws
 		self.status("Opened", color_t.success)
@@ -95,6 +100,7 @@ class WSClient:
 			text = f"Close code {close_status_code}" if msg is None else msg
 			color = color_t.error
 		if self.ws_ready(): self.status(text, color)
+		self.ws_stop_thread(ws)
 		self.m_ws = None
 		self.update_ui()
 
@@ -144,7 +150,7 @@ class WSClient:
 				ws.run_forever(sslopt={"context": ssl_context})
 			except Exception as e:
 				ws.close()
-				if self.m_ws_threads[ws]: self.m_ws_threads[ws].stop()
+				self.ws_stop_thread(ws)
 
 		self.m_ws_threads[ws] = StoppableThread(target=run)
 		self.m_ws_threads[ws].start()
@@ -153,4 +159,5 @@ class WSClient:
 		if self.ws_ready():
 			self.status("Closing connection ...", color_t.warn)
 			self.m_ws.close()
+			self.ws_stop_thread(self.m_ws)
 		self.status("Closed")
